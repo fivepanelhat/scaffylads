@@ -1,4 +1,5 @@
 import { ProjectsClient } from "./ProjectsClient";
+import { PageHeader } from "@/components/PageHeader";
 import { readData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -7,15 +8,11 @@ export default async function ProjectsPage() {
   const data = await readData();
   return (
     <div className="space-y-5">
-      <header>
-        <p className="text-sm font-semibold uppercase tracking-wider text-[var(--accent)]">
-          Projects
-        </p>
-        <h1 className="text-3xl font-bold">Job sites</h1>
-        <p className="mt-1 text-[var(--muted)]">
-          Track scaffolding jobs, clients, and site notes.
-        </p>
-      </header>
+      <PageHeader
+        kicker="Projects"
+        title="Job sites"
+        lead="Track scaffolding jobs, clients, and site notes."
+      />
       <ProjectsClient initialProjects={data.projects} />
     </div>
   );
