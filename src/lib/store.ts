@@ -6,6 +6,19 @@ import type { AppData, LogEntry, Project, Shift } from "./types";
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "app-data.json");
 
+/**
+ * Raised when an edit targets a record that is not in the store.
+ *
+ * Routes map this to 404 - editing a deleted job is a different failure from
+ * sending a malformed body, and the client needs to tell them apart.
+ */
+export class NotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
 async function ensureFile(): Promise<void> {
   await fs.mkdir(DATA_DIR, { recursive: true });
   try {
@@ -78,105 +91,103 @@ export async function writeData(data: AppData): Promise<void> {
   await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
 }
 
-export async function upsertProject(
-  input: Omit<Project, "id" | "createdAt" | "updatedAt"> & { id?: string },
+/** Input accepted when creating a record. */
+export type CreateInput<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
+
+/**
+ * Input accepted when editing a record.
+ *
+ * Every field bar the id is optional, so callers can send only what changed.
+ * Keys that are absent - or explicitly undefined - leave the stored value
+ * alone rather than reverting it to a schema default.
+ */
+export type PatchInput<T> = Partial<CreateInput<T>> & { id: string };
+
+/**
+ * Drop keys whose value is undefined.
+ *
+ * Spreading a patch straight onto a stored record would let an explicit
+ * `undefined` overwrite real data, so undefined is treated as "not supplied".
+ */
+function definedOnly<T extends object>(input: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(input).filter(([, v]) => v !== undefined),
+  ) as Partial<T>;
+}
+
+export async function createProject(
+  input: CreateInput<Project>,
 ): Promise<Project> {
   const data = await readData();
   const now = new Date().toISOString();
-  if (input.id) {
-    const idx = data.projects.findIndex((p) => p.id === input.id);
-    if (idx === -1) throw new Error("Project not found");
-    const updated: Project = {
-      ...data.projects[idx],
-      ...input,
-      id: input.id,
-      updatedAt: now,
-    };
-    data.projects[idx] = updated;
-    await writeData(data);
-    return updated;
-  }
-  const created: Project = {
-    id: randomUUID(),
-    name: input.name,
-    siteAddress: input.siteAddress,
-    client: input.client,
-    status: input.status,
-    notes: input.notes,
-    createdAt: now,
-    updatedAt: now,
-  };
+  const created: Project = { ...input, id: randomUUID(), createdAt: now, updatedAt: now };
   data.projects.unshift(created);
   await writeData(data);
   return created;
 }
 
-export async function upsertShift(
-  input: Omit<Shift, "id" | "createdAt"> & { id?: string },
-): Promise<Shift> {
+export async function updateProject(input: PatchInput<Project>): Promise<Project> {
   const data = await readData();
-  const now = new Date().toISOString();
-  if (input.id) {
-    const idx = data.shifts.findIndex((s) => s.id === input.id);
-    if (idx === -1) throw new Error("Shift not found");
-    const updated: Shift = { ...data.shifts[idx], ...input, id: input.id };
-    data.shifts[idx] = updated;
-    await writeData(data);
-    return updated;
-  }
+  const idx = data.projects.findIndex((p) => p.id === input.id);
+  if (idx === -1) throw new NotFoundError("Project not found");
+  const { id, ...patch } = input;
+  const updated: Project = {
+    ...data.projects[idx],
+    ...definedOnly(patch),
+    id,
+    updatedAt: new Date().toISOString(),
+  };
+  data.projects[idx] = updated;
+  await writeData(data);
+  return updated;
+}
+
+export async function createShift(input: CreateInput<Shift>): Promise<Shift> {
+  const data = await readData();
   const created: Shift = {
+    ...input,
     id: randomUUID(),
-    projectId: input.projectId,
-    title: input.title,
-    startsAt: input.startsAt,
-    endsAt: input.endsAt,
-    crew: input.crew,
-    status: input.status,
-    notes: input.notes,
-    createdAt: now,
+    createdAt: new Date().toISOString(),
   };
   data.shifts.unshift(created);
   await writeData(data);
   return created;
 }
 
-export async function upsertLog(
-  input: Omit<LogEntry, "id" | "createdAt" | "updatedAt"> & { id?: string },
-): Promise<LogEntry> {
+export async function updateShift(input: PatchInput<Shift>): Promise<Shift> {
+  const data = await readData();
+  const idx = data.shifts.findIndex((s) => s.id === input.id);
+  if (idx === -1) throw new NotFoundError("Shift not found");
+  const { id, ...patch } = input;
+  const updated: Shift = { ...data.shifts[idx], ...definedOnly(patch), id };
+  data.shifts[idx] = updated;
+  await writeData(data);
+  return updated;
+}
+
+export async function createLog(input: CreateInput<LogEntry>): Promise<LogEntry> {
   const data = await readData();
   const now = new Date().toISOString();
-  if (input.id) {
-    const idx = data.logs.findIndex((l) => l.id === input.id);
-    if (idx === -1) throw new Error("Log not found");
-    const updated: LogEntry = {
-      ...data.logs[idx],
-      ...input,
-      id: input.id,
-      updatedAt: now,
-    };
-    data.logs[idx] = updated;
-    await writeData(data);
-    return updated;
-  }
-  const created: LogEntry = {
-    id: randomUUID(),
-    projectId: input.projectId,
-    shiftId: input.shiftId,
-    date: input.date,
-    author: input.author,
-    weather: input.weather,
-    maxHeightM: input.maxHeightM,
-    inspectionDone: input.inspectionDone,
-    crewOnSite: input.crewOnSite,
-    workDone: input.workDone,
-    issues: input.issues,
-    nextSteps: input.nextSteps,
-    createdAt: now,
-    updatedAt: now,
-  };
+  const created: LogEntry = { ...input, id: randomUUID(), createdAt: now, updatedAt: now };
   data.logs.unshift(created);
   await writeData(data);
   return created;
+}
+
+export async function updateLog(input: PatchInput<LogEntry>): Promise<LogEntry> {
+  const data = await readData();
+  const idx = data.logs.findIndex((l) => l.id === input.id);
+  if (idx === -1) throw new NotFoundError("Log not found");
+  const { id, ...patch } = input;
+  const updated: LogEntry = {
+    ...data.logs[idx],
+    ...definedOnly(patch),
+    id,
+    updatedAt: new Date().toISOString(),
+  };
+  data.logs[idx] = updated;
+  await writeData(data);
+  return updated;
 }
 
 export async function deleteProject(id: string): Promise<void> {

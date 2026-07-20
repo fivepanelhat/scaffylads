@@ -98,5 +98,34 @@ npm install
 npm run dev
 ```
 
+### Checks
+
+```bash
+npm run type-check   # tsc --noEmit
+npm run lint         # eslint
+npm test             # vitest
+npm run build        # production build
+```
+
+CI runs all four on every push and pull request.
+
+### Where your data goes
+
+Journal data is held in a local JSON store (`data/app-data.json`, gitignored).
+It is never uploaded on save.
+
+The one exception is **AI tidy notes**:
+
+| Mode | When | What leaves the device |
+| --- | --- | --- |
+| **Offline** (default) | No `XAI_API_KEY` set | Nothing. The draft is assembled locally. |
+| **Live** | `XAI_API_KEY` is set | The work / issues / next-steps text is sent to `api.x.ai` (xAI, US) to be rewritten. |
+
+Live mode is opt-in by the operator setting a key, and the logbook labels which
+mode produced each draft. Per [CAT_CONGRUENCE.md](./CAT_CONGRUENCE.md) rule 1
+and [AGENTS.md](./AGENTS.md) rule 6, nothing should leave the device without the
+crew knowing — if you enable live mode, make sure that is the intent for the
+journal content in question.
+
 Built with care for the lads on the tools.  
 Coastal Alpine Tech • Taranaki / Aotearoa

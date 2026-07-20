@@ -266,7 +266,9 @@ export function LogbookClient({
               <p className="text-sm font-semibold">
                 AI draft{" "}
                 <span className="badge">
-                  {aiMode === "live" ? "SpaceXAI" : "offline"}
+                  {aiMode === "live"
+                    ? "sent to api.x.ai"
+                    : "offline · stayed on this device"}
                 </span>
               </p>
               <button type="button" className="btn" onClick={applyAiDraft}>
@@ -298,6 +300,18 @@ export function LogbookClient({
             {busy ? "Saving…" : "Save log entry"}
           </button>
         </div>
+
+        {/*
+          CAT_CONGRUENCE rule 1 / AGENTS.md rule 6: notes must never leave the
+          device without the crew knowing. State it before they press the
+          button, not only on the badge afterwards.
+        */}
+        <p className="text-xs text-[var(--muted)]">
+          Offline by default — your notes stay on this device. If this install
+          is configured with an xAI key, &ldquo;AI tidy notes&rdquo; sends the
+          work, issues and next-steps text to <code>api.x.ai</code> to be
+          rewritten. Nothing is sent when you save a log entry.
+        </p>
       </form>
 
       <div className="space-y-3">

@@ -1,9 +1,28 @@
 import OpenAI from "openai";
 
+/** Where journal text is sent in live mode. Surfaced in the UI - see below. */
+export const AI_PROVIDER_HOST = "api.x.ai";
+
+/** Raised when the upstream model call fails, so routes can answer 502 not 400. */
+export class AiUpstreamError extends Error {
+  constructor(message: string, readonly cause?: unknown) {
+    super(message);
+    this.name = "AiUpstreamError";
+  }
+}
+
+/** Live calls are bounded so a hung provider cannot pin the request open. */
+const AI_TIMEOUT_MS = 30_000;
+
 /**
  * SpaceXAI / xAI (OpenAI-compatible).
  * Set XAI_API_KEY in .env.local for live rewrites.
  * Without a key, returns a deterministic offline draft.
+ *
+ * Sovereignty note (CAT_CONGRUENCE rule 1, AGENTS.md rule 6): in live mode the
+ * raw notes leave the device for a third-party US endpoint. Offline mode is
+ * the default precisely so this never happens without the operator opting in
+ * by setting a key, and the UI labels which mode produced a draft.
  */
 export async function rewriteLogEntry(input: {
   workDone: string;
@@ -46,25 +65,38 @@ export async function rewriteLogEntry(input: {
 
   const client = new OpenAI({
     apiKey: key,
-    baseURL: "https://api.x.ai/v1",
+    baseURL: `https://${AI_PROVIDER_HOST}/v1`,
+    timeout: AI_TIMEOUT_MS,
   });
 
   const model = process.env.XAI_MODEL || "grok-4.5";
-  const completion = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: "system",
-        content:
-          "You write concise scaffolding site logbook entries for New Zealand crews. Never invent safety incidents.",
-      },
-      { role: "user", content: prompt },
-    ],
-    temperature: 0.3,
-  });
 
-  const text =
-    completion.choices[0]?.message?.content?.trim() ||
-    "AI returned empty output.";
+  let completion;
+  try {
+    completion = await client.chat.completions.create({
+      model,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You write concise scaffolding site logbook entries for New Zealand crews. Never invent safety incidents.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.3,
+    });
+  } catch (err) {
+    // A provider outage, bad key, or timeout is not the caller's fault - keep
+    // it distinguishable from a malformed request so the route can say 502.
+    throw new AiUpstreamError(
+      err instanceof Error ? err.message : "AI provider request failed",
+      err,
+    );
+  }
+
+  const text = completion.choices[0]?.message?.content?.trim();
+  if (!text) {
+    throw new AiUpstreamError("AI provider returned an empty response");
+  }
   return { mode: "live", text };
 }
