@@ -52,3 +52,11 @@ next-env.d.ts
 
 supabase/.temp/
 
+
+.vercel-deploy-files.json
+
+
+.deploy-*.json
+.deploy-input.json
+.vercel-deploy-files.json
+

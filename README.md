@@ -144,6 +144,8 @@ Full detail: **[ARCHITECTURE.md](./ARCHITECTURE.md)**
 ### Quick Start
 
 ```bash
+cp .env.example .env.local
+# Optional: fill Supabase + XAI keys (see below)
 npm install
 npm run dev
 ```
@@ -159,10 +161,60 @@ npm run build        # production build
 
 CI runs all four on every push and pull request.
 
+### Supabase (production store)
+
+Sydney project **scaffylads** (`ivprttslhudjoatsrsma`). Schema lives in
+`supabase/migrations/`. Dual-mode store:
+
+| Mode | When | Backend |
+| --- | --- | --- |
+| **JSON** | Supabase env unset | `data/app-data.json` (local demo) |
+| **Supabase** | `NEXT_PUBLIC_SUPABASE_URL` + service/anon key set | Postgres tables `projects`, `shifts`, `logs` |
+
+```bash
+# Link + push migrations (already applied on the shared project)
+npx supabase link --project-ref ivprttslhudjoatsrsma
+npx supabase db push
+```
+
+Env (see `.env.example`):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (server only — preferred for demo CRUD)
+
+### Vercel
+
+Production project: **scaffylads** on team `fivepanelhat-5998s-projects`.
+
+Production alias: https://scaffylads-fivepanelhat-5998s-projects.vercel.app
+
+Set these in **Project → Settings → Environment Variables** (Production + Preview):
+
+| Name | Notes |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://ivprttslhudjoatsrsma.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | from Supabase API settings |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only, never expose to browser |
+| `XAI_API_KEY` | optional live AI rewrite |
+| `XAI_MODEL` | optional, default `grok-4.5` |
+
+Then redeploy so the dual-store uses Supabase instead of empty local JSON.
+
+CLI (once logged in):
+
+```bash
+npx vercel link --project scaffylads
+npx vercel env pull .env.local
+npx vercel --prod
+```
+
 ### Where your data goes
 
-Journal data is held in a local JSON store (`data/app-data.json`, gitignored).
+**Local (no Supabase env):** journal data is in `data/app-data.json` (gitignored).
 It is never uploaded on save.
+
+**With Supabase env:** projects / shifts / logs are stored in the Sydney Supabase project.
 
 The one exception is **AI tidy notes**:
 
