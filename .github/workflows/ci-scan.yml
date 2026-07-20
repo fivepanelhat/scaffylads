@@ -1,0 +1,68 @@
+name: CI Scan
+
+on:
+  schedule:
+    - cron: "0 */8 * * *" # CAT fleet cadence
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ci-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    name: CI Scan · typecheck · lint · test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck (fatal)
+        run: npm run type-check
+
+      - name: Lint (fatal)
+        # Full eslint gate — style + correctness for the Next.js tree
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+        env:
+          XAI_API_KEY: ""
+
+      - name: Python fatal-syntax scan (fleet parity)
+        # Mirrors CAT Python repos' flake8 E9/F63/F7/F82 gate when .py exists.
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: flake8 hard errors on any Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+          if find . -name '*.py' \
+            -not -path './node_modules/*' \
+            -not -path './.next/*' \
+            -not -path './.venv/*' | grep -q .; then
+            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics \
+              --exclude=.venv,venv,node_modules,build,dist,data,out,.next,coverage
+          else
+            echo "No Python sources outside tooling — skip flake8."
+          fi

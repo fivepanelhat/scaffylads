@@ -1,0 +1,61 @@
+name: RedTeam Tests
+
+on:
+  schedule:
+    - cron: "0 */8 * * *" # CAT fleet cadence
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: redteam-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  redteam:
+    name: RedTeam · adversarial / sovereignty suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run adversarial / security stress suite
+        # Fleet pattern: local suite only — never scan third-party sites.
+        # Do not apt-install zaproxy (removed from ubuntu-latest).
+        run: |
+          if compgen -G "tests_security_stress/test_*.py" > /dev/null; then
+            python -m pip install --upgrade pip
+            pip install pytest
+            python -m pytest tests_security_stress/ -v --tb=short
+          else
+            echo "No local adversarial suite in this repo — nothing to run."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Vitest AI sovereignty tests (offline default)
+        # Ensures live AI stays opt-in and offline paths never need a key.
+        run: npm test -- --run src/lib/ai.test.ts src/lib/ai.ask.test.ts
+        env:
+          # Explicitly unset so CI cannot accidentally live-call
+          XAI_API_KEY: ""
