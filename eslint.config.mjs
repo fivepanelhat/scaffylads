@@ -1,25 +1,27 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+/**
+ * eslint-config-next 16 ships native flat configs, so they are spread in
+ * directly. The FlatCompat wrapper this file used to carry was for the
+ * eslintrc-shaped exports of v15 and throws against v16.
+ *
+ * No rules are disabled here on purpose - the codebase currently lints clean
+ * and should stay that way.
+ */
+export default defineConfig([
   {
     ignores: [
       "node_modules/**",
       ".next/**",
       "out/**",
       "build/**",
+      "playwright-report/**",
+      "test-results/**",
       "next-env.d.ts",
     ],
   },
-];
-
-export default eslintConfig;
+  ...nextVitals,
+  ...nextTs,
+]);
