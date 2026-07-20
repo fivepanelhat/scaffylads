@@ -3,11 +3,16 @@ import { test, expect } from "@playwright/test";
 /**
  * Dashboard and hero.
  *
- * The hero has twice been shipped in a state where it occupied space but
+ * The hero has repeatedly shipped in a state where it occupied space but
  * painted nothing - once needing an !important sweep to force it visible.
  * A "renders" assertion alone would not have caught that, because the
  * element was present and sized the whole time. These tests assert it is
  * actually painted.
+ *
+ * The root selector tracks whatever the current hero is called (.product-hero
+ * since the fleet-style redesign). If it is renamed again these fail loudly
+ * with "element(s) not found", which is the intended behaviour - a silent pass
+ * against a hero that no longer exists would be worse than a red build.
  */
 test.describe("Dashboard", () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +20,7 @@ test.describe("Dashboard", () => {
   });
 
   test("hero is present and actually painted", async ({ page }) => {
-    const hero = page.locator(".hero-banner");
+    const hero = page.locator(".product-hero");
     await expect(hero).toBeVisible();
 
     // toBeVisible() passes on a fully transparent element, so check the
@@ -51,11 +56,15 @@ test.describe("Dashboard", () => {
   });
 
   test("hero calls to action reach their pages", async ({ page }) => {
-    await page.getByRole("link", { name: "New log entry" }).click();
+    const hero = page.locator(".product-hero");
+
+    // Scoped to the hero: "Schedule" also appears in the top nav, and an
+    // unscoped lookup would pass even if the hero's own CTA were broken.
+    await hero.getByRole("link", { name: "New log entry" }).click();
     await expect(page).toHaveURL(/\/logbook$/);
 
     await page.goto("/");
-    await page.getByRole("link", { name: "View schedule" }).click();
+    await hero.getByRole("link", { name: "Schedule", exact: true }).click();
     await expect(page).toHaveURL(/\/schedule$/);
   });
 
