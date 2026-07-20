@@ -22,7 +22,7 @@ export const fiveWs = [
   {
     w: "When",
     title: "When we ship",
-    body: "Pre-seed MVP now (web + dual store). Voice, offline SQLite, Tauri desktop, and FastAPI “Ask Scaffy” depth land as progressive enhancement — core logging works today without cloud.",
+    body: "Live MVP now: Next.js web, dual JSON/Supabase store, multimodal capture, Ask Scaffy in-process. SQLite, FastAPI, and Tauri are roadmap ticks (see ROADMAP.md) — not claimed as live until checked off.",
   },
   {
     w: "Where",
@@ -72,7 +72,7 @@ export const solution = {
     },
     {
       title: "Dual store",
-      body: "JSON on disk for demos and air-gap; Supabase when env is set. Sync is progressive enhancement, never a silent default.",
+      body: "JSON on disk for demos and air-gap; Supabase when env is set. Sync is progressive enhancement, never a silent default. SQLite is roadmap, not live.",
     },
   ],
 } as const;

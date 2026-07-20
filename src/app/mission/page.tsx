@@ -141,7 +141,17 @@ export default function MissionPage() {
             rel="noreferrer"
           >
             CAT_CONGRUENCE.md
-          </a>
+          </a>{" "}
+          ·{" "}
+          <a
+            className="text-[var(--accent-2)] underline"
+            href="https://github.com/fivepanelhat/scaffylads/blob/main/ROADMAP.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ROADMAP.md
+          </a>{" "}
+          (tick FastAPI / SQLite / Tauri only when real)
         </p>
       </section>
     </div>

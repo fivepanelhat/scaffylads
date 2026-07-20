@@ -6,11 +6,22 @@ ScaffyLads is a sovereign, offline-capable AI work journal for scaffolding and c
 
 It prioritises local-first data, voice + natural language interaction, and clean compliance records.
 
-**This document is the source of truth.** Every future build (including Grok Build sessions) must stay congruent with these decisions.
+**This document is the source of truth for design intent.**  
+**What is shipped** is tracked in [ROADMAP.md](./ROADMAP.md) (tick boxes).  
+**Marketing / banners must match ROADMAP shipped items** — not aspirational layers.
 
-> **Diagrams:** Architecture images and Mermaid maps describe the **target product architecture** for this pre-seed product. They are engineering design maps, not claims of large-scale commercial fleet deployment.
+### As built (live MVP)
 
-![ScaffyLads architecture overview](assets/architecture_overview.png)
+| Layer | Shipped now | Explicitly not live |
+| --- | --- | --- |
+| Client | Next.js web on Vercel | Tauri desktop, full PWA offline |
+| API | Next.js route handlers | FastAPI journal engine |
+| Intelligence | Ask Scaffy + AI tidy in Next (offline + optional SpaceXAI) | Python FastAPI NL service, local edge LLM |
+| Data | JSON dual-store + optional Supabase (Sydney) | SQLite local vault as primary store |
+
+![ScaffyLads architecture overview — as built](assets/architecture_overview.png)
+
+> Banner and `/architecture` show **as-built**. Target diagrams below are labelled **target** / **roadmap**. Full tick list: [ROADMAP.md](./ROADMAP.md).
 
 ## Core Principles (Non-negotiable)
 
@@ -21,7 +32,23 @@ It prioritises local-first data, voice + natural language interaction, and clean
 5. **Congruence with Front_Line_Whanau** – Reuse design patterns, Tauri packaging approach, and engineering discipline.
 6. **HITL for high-stakes** – Compliance templates, billing, and production data changes require human approval.
 
-## System map (target)
+## System map (as built — production)
+
+```mermaid
+flowchart TB
+  CREW[Crew / site lead] --> WEB[Next.js Web]
+  WEB --> UI[UI pages]
+  UI --> API[Next.js API routes]
+  UI --> AI[AI rewrite + Ask Scaffy]
+  API --> JSON[Local JSON]
+  API --> SB[Supabase optional]
+  AI --> OFF[Offline mode]
+  AI -.->|XAI_API_KEY| XAI[SpaceXAI]
+```
+
+## System map (target / roadmap)
+
+Dashed items are **not shipped**. Tick them in ROADMAP.md when real.
 
 ```mermaid
 %%{init: {

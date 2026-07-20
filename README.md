@@ -33,15 +33,17 @@ Live product: **https://scaffylads.vercel.app** · Mission / 5 W’s: `/mission`
 
 **Solution:** projects · shifts · logbook dual-store; multimodal capture; Ask Scaffy NL; HITL + Te Mana Raraunga alignment (see [COMPLIANCE.md](./COMPLIANCE.md), [CAT_CONGRUENCE.md](./CAT_CONGRUENCE.md)).
 
-### Core Stack
+### Core stack (shipped now)
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
-| Frontend | Next.js + React + TypeScript | Web + PWA |
-| Desktop | Tauri 2 (planned) | Windows + Linux |
-| Styling | Tailwind + Ultra Glassmorphism | Modern high-clarity UI |
-| Backend / AI | FastAPI (Python) | Journal engine + NL queries |
-| Data | Local-first → optional Supabase | Offline capable + sync |
+| Frontend | Next.js + React + TypeScript | Web app (Vercel) |
+| Styling | Tailwind + CAT dark glass UI | High-clarity site UI |
+| API / AI | Next.js route handlers + SpaceXAI opt-in | CRUD, Ask Scaffy, AI tidy |
+| Data | Local JSON dual-store → optional Supabase Sydney | Local-first + production DB |
+
+**Roadmap (not live):** SQLite local vault · FastAPI Python engine · Tauri desktop · full PWA offline · blob attachments.  
+Tick progress in **[ROADMAP.md](./ROADMAP.md)** — no fixed dates, just checkboxes as work lands.
 
 ## Architecture Overview
 
