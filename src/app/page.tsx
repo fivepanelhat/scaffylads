@@ -22,23 +22,20 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Ultra Glassmorphism Hero Banner — Super Grok */}
-      <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl md:p-12">
-        {/* Ambient orbs */}
-        <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-sky-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-orange-500/15 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-40 -translate-x-1/2 rounded-full bg-indigo-500/15 blur-3xl" />
+      {/* Ultra Glassmorphism Hero Banner — Super Grok (high-contrast CSS) */}
+      <section className="hero-banner" aria-label="ScaffyLads hero">
+        <div className="hero-orb hero-orb-sky" aria-hidden />
+        <div className="hero-orb hero-orb-orange" aria-hidden />
+        <div className="hero-orb hero-orb-indigo" aria-hidden />
 
         <div className="relative z-10">
-          <p className="text-sm font-semibold uppercase tracking-widest text-sky-400">
-            ScaffyLads
-          </p>
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white md:text-5xl">
+          <p className="hero-kicker">ScaffyLads</p>
+          <h1 className="hero-title">
             AI Work Journal for
             <br />
             Scaffolding Crews
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-300">
+          <p className="hero-lead">
             Capture the day by voice or text. Ask questions in plain English.
             Keep clean records for IRD, clients and WorkSafe.
           </p>

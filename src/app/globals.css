@@ -164,3 +164,91 @@ button {
   background: var(--panel-2);
   color: var(--text);
 }
+
+/* Super Grok glassmorphism hero — high contrast so it reads on dark bg */
+.hero-banner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  min-height: 280px;
+  padding: 2rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(30, 58, 95, 0.85) 0%,
+      rgba(18, 26, 43, 0.92) 45%,
+      rgba(15, 40, 48, 0.9) 100%
+    );
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 25px 50px -12px rgba(0, 0, 0, 0.55),
+    0 0 80px rgba(14, 165, 233, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@media (min-width: 768px) {
+  .hero-banner {
+    padding: 3rem;
+    min-height: 320px;
+  }
+}
+
+.hero-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+}
+
+.hero-orb-sky {
+  left: -5rem;
+  top: -5rem;
+  width: 16rem;
+  height: 16rem;
+  background: rgba(56, 189, 248, 0.35);
+}
+
+.hero-orb-orange {
+  right: -5rem;
+  bottom: -5rem;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(249, 115, 22, 0.28);
+}
+
+.hero-orb-indigo {
+  left: 50%;
+  top: 0;
+  width: 10rem;
+  height: 10rem;
+  transform: translateX(-50%);
+  background: rgba(99, 102, 241, 0.25);
+}
+
+.hero-kicker {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
+.hero-title {
+  margin: 0.75rem 0 0;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.hero-lead {
+  margin: 1rem 0 0;
+  max-width: 36rem;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
