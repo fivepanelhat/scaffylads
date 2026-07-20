@@ -11,6 +11,10 @@
 [![Te Mana Raraunga](https://img.shields.io/badge/Te%20Mana%20Raraunga-Aligned-0f766e)](./COMPLIANCE.md)
 [![SpaceXAI](https://img.shields.io/badge/AI-SpaceXAI%20opt--in-111827)](./COMPLIANCE.md)
 [![Roadmap](https://img.shields.io/badge/Roadmap-Tick%20as%20we%20build-f59e0b)](./ROADMAP.md)
+[![CI](https://github.com/fivepanelhat/scaffylads/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/scaffylads/actions/workflows/ci.yml)
+[![CI Scan](https://github.com/fivepanelhat/scaffylads/actions/workflows/ci-scan.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/scaffylads/actions/workflows/ci-scan.yml)
+[![SecOps](https://github.com/fivepanelhat/scaffylads/actions/workflows/secops.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/scaffylads/actions/workflows/secops.yml)
+[![RedTeam](https://github.com/fivepanelhat/scaffylads/actions/workflows/redteam.yml/badge.svg?branch=main)](https://github.com/fivepanelhat/scaffylads/actions/workflows/redteam.yml)
 
 **Part of the [Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat)** · Org: [fivepanelhat](https://github.com/fivepanelhat) · Live: [scaffylads.vercel.app](https://scaffylads.vercel.app)
 
