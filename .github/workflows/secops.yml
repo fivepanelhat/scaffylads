@@ -1,0 +1,76 @@
+name: SecOps Scan
+
+on:
+  schedule:
+    - cron: "0 */8 * * *" # every 8 hours UTC — CAT fleet cadence
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: secops-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-scan:
+    name: SecOps · audit + SAST
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit (high / critical)
+        # Fail on high+ so supply-chain issues gate main.
+        run: npm audit --audit-level=high
+
+      - name: Set up Python (Bandit — CAT fleet SAST)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Bandit SAST (Python paths if any)
+        # Exclude adversarial suite so simulated payloads do not trip SAST.
+        # Exclude node_modules / .next (TS monorepo).
+        run: |
+          bandit -r . -ll \
+            --exclude ./tests_security_stress/,./node_modules/,./.next/,./.git/,./data/,./out/,./coverage/,./playwright-report/,./test-results/
+
+      - name: Secret pattern hygiene (tracked files)
+        # Lightweight secret hygiene without third-party scanner tokens.
+        run: |
+          set -e
+          FAIL=0
+          if git grep -nE 'BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY' -- \
+            ':!*.md' ':!.github/**' 2>/dev/null; then
+            echo "::error::Private key material found in tracked files"
+            FAIL=1
+          fi
+          if git grep -nE 'sk-[a-zA-Z0-9]{20,}|xai-[a-zA-Z0-9]{20,}' -- \
+            ':!*.md' ':!package-lock.json' ':!.github/**' 2>/dev/null; then
+            echo "::error::Possible live API key material in tracked files"
+            FAIL=1
+          fi
+          if git grep -nE 'SUPABASE_SERVICE_ROLE_KEY\s*=\s*["'\'']?eyJ' -- \
+            ':!*.md' ':!.env.example' 2>/dev/null; then
+            echo "::error::Service role JWT must never be committed"
+            FAIL=1
+          fi
+          exit $FAIL

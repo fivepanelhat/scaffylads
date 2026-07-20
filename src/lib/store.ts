@@ -5,6 +5,7 @@ import type { CreateInput, PatchInput, Store } from "./stores/shared";
 
 export { NotFoundError } from "./stores/shared";
 export type { CreateInput, PatchInput } from "./stores/shared";
+export { definedOnly } from "./stores/shared";
 
 /**
  * Picks the storage backend.
@@ -27,6 +28,14 @@ async function store(): Promise<Store> {
 /** Which backend is in use - surfaced in the UI so it is never a guess. */
 export function activeBackend(): "supabase" | "local-json" {
   return isSupabaseConfigured() ? "supabase" : "local-json";
+}
+
+/**
+ * Dashboard-friendly alias (main used "json" vs "local-json").
+ * Prefer activeBackend() for new code.
+ */
+export function storageBackend(): "supabase" | "json" {
+  return isSupabaseConfigured() ? "supabase" : "json";
 }
 
 export async function readData(): Promise<AppData> {
@@ -63,8 +72,6 @@ export async function createLog(
   return (await store()).createLog(input);
 }
 
-export async function updateLog(
-  input: PatchInput<LogEntry>,
-): Promise<LogEntry> {
+export async function updateLog(input: PatchInput<LogEntry>): Promise<LogEntry> {
   return (await store()).updateLog(input);
 }

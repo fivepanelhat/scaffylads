@@ -45,3 +45,23 @@ next-env.d.ts
 # playwright
 /playwright-report/
 /test-results/
+
+.env.local
+.env*.local
+
+
+supabase/.temp/
+
+
+.vercel-deploy-files.json
+
+
+.deploy-*.json
+.deploy-input.json
+.vercel-deploy-files.json
+
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+

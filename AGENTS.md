@@ -24,11 +24,16 @@ This file makes the repository congruent for **Grok Build**, Aether-style agents
 
 ## Key Entry Points for Agents
 
-- `ARCHITECTURE.md` – System design source of truth (read first)
-- `backend/` – FastAPI service (create / extend here for NL / journal logic)
-- `src/` – Next.js App Router frontend
-- `src-tauri/` – Desktop packaging (to be added)
+- `ROADMAP.md` – **What is shipped vs not** (tick boxes; no fixed dates)
+- `ARCHITECTURE.md` – Design intent + as-built vs target maps
+- `src/` – Next.js App Router frontend **and** current API/AI (live)
+- `supabase/` – Postgres migrations for optional cloud store
+- `backend/` – **Does not exist yet** — FastAPI journal engine is roadmap only
+- `src-tauri/` – **Does not exist yet** — Tauri desktop is roadmap only
 - `CAT_CONGRUENCE.md` – Alignment rules with Coastal Alpine Tech
+- `COMPLIANCE.md` – Privacy / Te Mana / HITL alignment notes
+
+**Truth rule:** Never describe FastAPI, SQLite, or Tauri as live until `ROADMAP.md` marks them `[x]`.
 
 ## Naming Conventions
 
