@@ -1,5 +1,25 @@
 # ScaffyLads
 
+<!-- BEGIN CAT_CONGRUENCE_SNIPPET -->
+## Coastal Alpine Tech portfolio
+
+[![Stage](https://img.shields.io/badge/Stage-Pre--seed-8B5CF6)](https://github.com/fivepanelhat/fivepanelhat)
+[![Live MVP](https://img.shields.io/badge/Live-MVP%20on%20Vercel-0ea5e9)](https://scaffylads.vercel.app)
+[![Stack](https://img.shields.io/badge/Stack-Next.js%20%2B%20dual%20store-0f766e)](./ROADMAP.md)
+[![Local-first](https://img.shields.io/badge/Data-Local--first%20%2B%20Supabase%20opt--in-00247D)](./ARCHITECTURE.md)
+[![HITL](https://img.shields.io/badge/HITL-Draft%2FPrepare%20only-dc2626)](./AGENTS.md)
+[![Te Mana Raraunga](https://img.shields.io/badge/Te%20Mana%20Raraunga-Aligned-0f766e)](./COMPLIANCE.md)
+[![SpaceXAI](https://img.shields.io/badge/AI-SpaceXAI%20opt--in-111827)](./COMPLIANCE.md)
+[![Roadmap](https://img.shields.io/badge/Roadmap-Tick%20as%20we%20build-f59e0b)](./ROADMAP.md)
+
+**Part of the [Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat)** · Org: [fivepanelhat](https://github.com/fivepanelhat) · Live: [scaffylads.vercel.app](https://scaffylads.vercel.app)
+
+> Sovereign work journal for NZ scaffolding crews — local-first capture, multimodal notes, Ask Scaffy NL, Te Mana Raraunga aligned. FastAPI / SQLite / Tauri are **roadmap**, not live ([ROADMAP.md](./ROADMAP.md)).
+
+**Agents inform, draft, prepare, and remind. Humans save, sign, file, send, and pay.**  
+Congruence: [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md) · Compliance: [`COMPLIANCE.md`](./COMPLIANCE.md) · Agents: [`AGENTS.md`](./AGENTS.md)
+<!-- END CAT_CONGRUENCE_SNIPPET -->
+
 ![ScaffyLads Banner](assets/social_preview.png)
 
 ---
@@ -24,7 +44,7 @@ Live product: **https://scaffylads.vercel.app** · Mission / 5 W’s: `/mission`
 | **Who** | Sole traders & small scaffolding crews (site leads, board hands) across Aotearoa |
 | **What** | AI-native work journal + roster: multimodal capture, NL query, WorkSafe-minded logs |
 | **Why** | Notes die in vans & chats; kms/OT/inspections vanish when claims come due |
-| **When** | Pre-seed MVP now; voice/SQLite/Tauri/FastAPI depth as progressive enhancement |
+| **When** | Live MVP now; SQLite / FastAPI / Tauri are roadmap ticks ([ROADMAP.md](./ROADMAP.md)) |
 | **Where** | Web/PWA nationwide NZ; local-first; optional Supabase Sydney |
 
 ## Problems → solution
