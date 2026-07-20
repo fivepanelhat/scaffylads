@@ -41,3 +41,7 @@ next-env.d.ts
 
 # app data (local JSON store)
 /data/
+
+# playwright
+/playwright-report/
+/test-results/

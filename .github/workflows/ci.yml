@@ -45,3 +45,29 @@ jobs:
       # No XAI_API_KEY in CI on purpose: the build and tests must pass with the
       # AI layer in its offline, nothing-leaves-the-device mode.
       - run: npm run build
+
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      # Runs against a production build (see playwright.config.ts) so the
+      # hero is checked as users get it, not as the dev server renders it.
+      - run: npm run e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
