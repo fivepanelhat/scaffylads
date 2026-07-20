@@ -8,12 +8,30 @@
 
 ScaffyLads is a cross-platform AI-powered work journal purpose-built for scaffolding and construction professionals in Aotearoa New Zealand.
 
-Capture the day by typing or speaking. Then ask questions in plain English:
+Capture the day by **text, paste, voice, or file note**. Then ask questions in plain English (**Ask Scaffy**):
 
 - *“Travel kms for the last two job sites”*
 - *“How many days did I work in Palmerston North this year?”*
 - *“Overtime hours so far for [builder]”*
 - *“Show compliance notes for the [site] scaffold”*
+
+Live product: **https://scaffylads.vercel.app** · Mission / 5 W’s: `/mission` · Ask: `/ask`
+
+## The 5 W's
+
+| W | Answer |
+| --- | --- |
+| **Who** | Sole traders & small scaffolding crews (site leads, board hands) across Aotearoa |
+| **What** | AI-native work journal + roster: multimodal capture, NL query, WorkSafe-minded logs |
+| **Why** | Notes die in vans & chats; kms/OT/inspections vanish when claims come due |
+| **When** | Pre-seed MVP now; voice/SQLite/Tauri/FastAPI depth as progressive enhancement |
+| **Where** | Web/PWA nationwide NZ; local-first; optional Supabase Sydney |
+
+## Problems → solution
+
+**Problems:** fragmented capture, compliance drag, admin after dark, data that walks away, no way to ask the past.
+
+**Solution:** projects · shifts · logbook dual-store; multimodal capture; Ask Scaffy NL; HITL + Te Mana Raraunga alignment (see [COMPLIANCE.md](./COMPLIANCE.md), [CAT_CONGRUENCE.md](./CAT_CONGRUENCE.md)).
 
 ### Core Stack
 

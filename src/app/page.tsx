@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { readData, storageBackend } from "@/lib/store";
 import { fmtDateTime, relativeDayLabel, statusLabel } from "@/lib/format";
+import { problems, solution } from "@/lib/product-story";
 
 export const dynamic = "force-dynamic";
 
@@ -44,18 +45,22 @@ export default async function DashboardPage() {
               AI work journal for scaffolding crews
             </h1>
             <p className="hero-lead">
-              Capture the day by voice or text. Ask questions in plain English.
-              Keep clean records for IRD, clients and WorkSafe.
+              Multimodal capture — text, paste, voice, photo notes. Ask Scaffy
+              in plain English. Local-first with Te Mana Raraunga alignment;
+              clean records for IRD, clients and WorkSafe.
             </p>
             <div className="hero-actions">
               <Link href="/logbook" className="btn btn-primary">
                 New log entry
               </Link>
-              <Link href="/schedule" className="btn">
-                View schedule
+              <Link href="/ask" className="btn btn-ai">
+                Ask Scaffy
               </Link>
-              <Link href="/projects" className="btn">
-                Manage projects
+              <Link href="/mission" className="btn">
+                Mission · 5 W&apos;s
+              </Link>
+              <Link href="/schedule" className="btn">
+                Schedule
               </Link>
             </div>
           </div>
@@ -70,6 +75,50 @@ export default async function DashboardPage() {
             >
               {backend === "supabase" ? "Supabase · Sydney" : "Local JSON store"}
             </span>
+          </div>
+        </div>
+      </section>
+
+      <section className="mission-strip" aria-label="Problem and solution">
+        <div className="card card-pad">
+          <div className="card-head">
+            <h2 className="card-title">Problems we solve</h2>
+            <Link href="/mission" className="card-link">
+              Full mission
+            </Link>
+          </div>
+          <ul className="item-list">
+            {problems.slice(0, 3).map((p) => (
+              <li key={p.title} className="item-row">
+                <p className="item-title">{p.title}</p>
+                <p className="item-sub">{p.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="card card-pad">
+          <div className="card-head">
+            <h2 className="card-title">{solution.headline}</h2>
+            <Link href="/ask" className="card-link">
+              Try NL
+            </Link>
+          </div>
+          <p className="item-sub">{solution.lead}</p>
+          <div className="mission-pill-row">
+            <span className="mission-pill accent">Multimodal</span>
+            <span className="mission-pill accent">Ask Scaffy</span>
+            <span className="mission-pill">Local-first</span>
+            <span className="mission-pill">Te Mana</span>
+            <span className="mission-pill">HITL</span>
+            <span className="mission-pill">Privacy Act</span>
+          </div>
+          <div className="hero-actions" style={{ marginTop: "1rem" }}>
+            <Link href="/mission#governance" className="btn">
+              Security &amp; governance
+            </Link>
+            <Link href="/mission#multimodal" className="btn">
+              Capture modes
+            </Link>
           </div>
         </div>
       </section>

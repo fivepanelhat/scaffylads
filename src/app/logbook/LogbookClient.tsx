@@ -1,7 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LogEntry, Project, Shift, Weather } from "@/lib/types";
+
+type SpeechRec = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: ((ev: { results: { [i: number]: { [j: number]: { transcript: string } } } }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+};
+
+function getSpeechRecognition(): (new () => SpeechRec) | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as {
+    SpeechRecognition?: new () => SpeechRec;
+    webkitSpeechRecognition?: new () => SpeechRec;
+  };
+  return w.SpeechRecognition || w.webkitSpeechRecognition || null;
+}
 
 export function LogbookClient({
   initialLogs,
@@ -29,14 +49,72 @@ export function LogbookClient({
     workDone: "",
     issues: "",
     nextSteps: "",
+    attachmentName: "",
   });
+  const [pasteDump, setPasteDump] = useState("");
   const [aiDraft, setAiDraft] = useState<string | null>(null);
   const [aiMode, setAiMode] = useState<"live" | "offline" | null>(null);
   const [busy, setBusy] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
+  const [listening, setListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const recRef = useRef<SpeechRec | null>(null);
+
+  useEffect(() => {
+    return () => {
+      try {
+        recRef.current?.stop();
+      } catch {
+        /* ignore */
+      }
+    };
+  }, []);
 
   const projectShifts = shifts.filter((s) => s.projectId === form.projectId);
+
+  function applyPasteDump() {
+    if (!pasteDump.trim()) return;
+    setForm((f) => ({
+      ...f,
+      workDone: f.workDone
+        ? `${f.workDone}\n\n${pasteDump.trim()}`
+        : pasteDump.trim(),
+    }));
+    setPasteDump("");
+  }
+
+  function toggleVoice() {
+    const Ctor = getSpeechRecognition();
+    if (!Ctor) {
+      setError("Voice needs Chrome/Edge speech recognition in this browser.");
+      return;
+    }
+    if (listening && recRef.current) {
+      recRef.current.stop();
+      setListening(false);
+      return;
+    }
+    const rec = new Ctor();
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.lang = "en-NZ";
+    rec.onresult = (ev) => {
+      const t = ev.results[0]?.[0]?.transcript || "";
+      setForm((f) => ({
+        ...f,
+        workDone: f.workDone ? `${f.workDone} ${t}` : t,
+      }));
+    };
+    rec.onerror = () => {
+      setListening(false);
+      setError("Voice recognition error — try again or type.");
+    };
+    rec.onend = () => setListening(false);
+    recRef.current = rec;
+    setError(null);
+    setListening(true);
+    rec.start();
+  }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -75,7 +153,9 @@ export function LogbookClient({
         maxHeightM: "",
         crewOnSite: "",
         inspectionDone: false,
+        attachmentName: "",
       }));
+      setPasteDump("");
       setAiDraft(null);
       setAiMode(null);
     } catch (err) {
@@ -128,8 +208,67 @@ export function LogbookClient({
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
-      <form onSubmit={save} className="card space-y-3 p-5">
-        <h2 className="text-lg font-bold">New log entry</h2>
+      <form onSubmit={save} className="card card-pad space-y-3">
+        <div className="card-head">
+          <h2 className="card-title">New log entry</h2>
+          <span className="badge">Multimodal</span>
+        </div>
+
+        <div className="mode-toolbar" role="group" aria-label="Capture modes">
+          <button
+            type="button"
+            className={`btn ${listening ? "btn-ai" : ""}`}
+            onClick={toggleVoice}
+          >
+            {listening ? "Stop voice" : "Voice → work done"}
+          </button>
+          <label className="btn file-btn">
+            Photo / file note
+            <input
+              type="file"
+              accept="image/*,.pdf,.txt"
+              className="sr-only"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (!f) return;
+                setForm((prev) => ({
+                  ...prev,
+                  attachmentName: f.name,
+                  workDone: prev.workDone
+                    ? `${prev.workDone}\n\n[Attached: ${f.name}]`
+                    : `[Attached: ${f.name}]`,
+                }));
+              }}
+            />
+          </label>
+        </div>
+
+        <div className="field">
+          <label htmlFor="paste">Paste dump (WhatsApp / van notes)</label>
+          <textarea
+            id="paste"
+            value={pasteDump}
+            onChange={(e) => setPasteDump(e.target.value)}
+            placeholder="Paste rough notes here, then Apply to work done…"
+            rows={2}
+          />
+          <button
+            type="button"
+            className="btn"
+            onClick={applyPasteDump}
+            disabled={!pasteDump.trim()}
+          >
+            Apply paste → work done
+          </button>
+        </div>
+
+        {form.attachmentName && (
+          <p className="text-xs text-[var(--muted)]">
+            Attachment noted: <strong>{form.attachmentName}</strong> (name stored
+            in work notes; binary upload to vault is roadmap)
+          </p>
+        )}
+
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="field">
             <label htmlFor="project">Project</label>
@@ -290,7 +429,7 @@ export function LogbookClient({
             onClick={rewriteWithAi}
             disabled={aiBusy}
           >
-            {aiBusy ? "Rewriting…" : "AI tidy notes"}
+            {aiBusy ? "Rewriting…" : "AI tidy (NL polish)"}
           </button>
           <button
             className="btn btn-primary"
@@ -299,6 +438,9 @@ export function LogbookClient({
           >
             {busy ? "Saving…" : "Save log entry"}
           </button>
+          <a className="btn" href="/ask">
+            Ask Scaffy
+          </a>
         </div>
 
         {/*
