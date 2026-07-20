@@ -10,7 +10,7 @@ const links = [
   { href: "/logbook", label: "Logbook" },
 ];
 
-export function Nav() {
+export function Nav({ signedIn = false }: { signedIn?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -46,6 +46,16 @@ export function Nav() {
               </Link>
             );
           })}
+
+          {/* POST, not a link: a GET sign-out can be fired by any third-party
+              image tag on a page the user happens to visit. */}
+          {signedIn && (
+            <form action="/auth/signout" method="post" className="ml-1">
+              <button type="submit" className="nav-link">
+                Sign out
+              </button>
+            </form>
+          )}
         </nav>
       </div>
     </header>

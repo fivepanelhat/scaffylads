@@ -109,6 +109,44 @@ npm run build        # production build
 
 CI runs all four on every push and pull request.
 
+### Storage: local file or hosted Postgres
+
+Two backends, chosen by whether Supabase env vars are present. There is no
+build flag and no code change — see `src/lib/store.ts`.
+
+| | Local JSON (default) | Supabase |
+| --- | --- | --- |
+| Setup | none | project + migration + env vars |
+| Accounts | none, single user | magic-link sign-in |
+| Data location | `data/app-data.json` on your machine | your Supabase project |
+| Isolation | n/a | row-level security, per user |
+| Used by | `npm run dev`, tests, CI | deployments |
+
+Setting only one of the two variables is treated as unset, so a half-configured
+deployment falls back to the local file rather than pointing at a client that
+cannot authenticate.
+
+#### Turning on Supabase
+
+1. Create a Supabase project — give ScaffyLads its **own** project rather than
+   reusing another product's.
+2. Run `supabase/migrations/0001_scaffylads_core.sql` in the SQL editor (or
+   `supabase db push`). It creates the tables, the indexes, and the RLS
+   policies that scope every row to its owner.
+3. Enable the **Email** provider in Authentication → Providers.
+4. Add the callback URL under Authentication → URL Configuration:
+   `https://<your-domain>/auth/callback` (and `http://localhost:3000/auth/callback`
+   for local work).
+5. Put `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+   `.env.local`, and in your host's environment variables for deployment.
+
+The `service_role` key is **not used anywhere in this app** and should not be
+added. It bypasses RLS completely; nothing here needs that, and not wiring it
+up means a future mistake cannot reach for it.
+
+Once configured, every route except `/login` and the auth callbacks requires a
+signed-in user, enforced in `src/middleware.ts`.
+
 ### Where your data goes
 
 Journal data is held in a local JSON store (`data/app-data.json`, gitignored).
