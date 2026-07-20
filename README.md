@@ -25,6 +25,109 @@ Capture the day by typing or speaking. Then ask questions in plain English:
 | Backend / AI | FastAPI (Python) | Journal engine + NL queries |
 | Data | Local-first → optional Supabase | Offline capable + sync |
 
+## Architecture Overview
+
+> **Diagrams:** Architecture images and Mermaid maps describe the **target product architecture** for this pre-seed product. They are engineering design maps, not claims of large-scale commercial fleet deployment.
+
+![ScaffyLads architecture overview](assets/architecture_overview.png)
+
+### System map
+
+```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "fontSize": "15px",
+    "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+    "primaryColor": "#0ea5e9",
+    "primaryTextColor": "#f8fafc",
+    "primaryBorderColor": "#38bdf8",
+    "lineColor": "#67e8f9",
+    "secondaryColor": "#1e293b",
+    "tertiaryColor": "#0f172a",
+    "clusterBkg": "#0b1220cc",
+    "clusterBorder": "#38bdf880",
+    "titleColor": "#e2e8f0"
+  },
+  "flowchart": {
+    "nodeSpacing": 32,
+    "rankSpacing": 40,
+    "padding": 16,
+    "htmlLabels": true,
+    "curve": "basis",
+    "useMaxWidth": true
+  }
+}}%%
+flowchart TB
+
+  classDef client fill:#0c4a6e,stroke:#38bdf8,stroke-width:2px,color:#f0f9ff
+  classDef api fill:#134e4a,stroke:#2dd4bf,stroke-width:2px,color:#f0fdfa
+  classDef ai fill:#3b0764,stroke:#e879f9,stroke-width:2px,color:#fdf4ff
+  classDef store fill:#1e1b4b,stroke:#a5b4fc,stroke-width:2px,color:#eef2ff
+  classDef hitl fill:#052e16,stroke:#4ade80,stroke-width:2px,color:#f0fdf4
+
+  CREW["Crew / site lead"] --> WEB["Next.js Web + PWA"]
+  CREW --> DESK["Tauri 2 desktop<br/>planned"]
+
+  subgraph CLIENT["Client layer"]
+    WEB
+    DESK
+    UI["Dashboard · Projects<br/>Schedule · Logbook"]
+    WEB --> UI
+    DESK --> UI
+  end
+
+  UI --> API["API routes<br/>projects · shifts · logs"]
+  UI --> AIAPI["AI rewrite<br/>SpaceXAI opt-in"]
+
+  subgraph DATA["Data layer"]
+    STORE["Local JSON / SQLite<br/>local-first"]
+    SB["Supabase optional<br/>target sync"]
+  end
+
+  API --> STORE
+  AIAPI --> XAI["xAI live rewrite"]
+  AIAPI --> OFF["Offline draft"]
+  STORE -.-> SB
+
+  CREW --> HITL["HITL sign-off<br/>compliance · billing"]
+
+  class WEB,DESK,UI client
+  class API api
+  class AIAPI,XAI,OFF ai
+  class STORE,SB store
+  class HITL hitl
+```
+
+### Log + AI tidy flow
+
+```mermaid
+%%{init: {
+  "theme": "dark",
+  "themeVariables": {
+    "fontSize": "14px",
+    "primaryColor": "#0ea5e9",
+    "primaryTextColor": "#f8fafc",
+    "primaryBorderColor": "#38bdf8",
+    "lineColor": "#94a3b8"
+  },
+  "flowchart": { "curve": "basis", "useMaxWidth": true }
+}}%%
+flowchart LR
+  A["Field notes"] --> B["Logbook UI"]
+  B --> C["POST /api/logs"]
+  C --> D["Local store<br/>not auto-uploaded"]
+  B --> E["AI tidy"]
+  E --> F{XAI_API_KEY?}
+  F -->|no| G["Offline draft"]
+  F -->|yes| H["api.x.ai"]
+  G --> B
+  H --> B
+  B --> I["Human saves"]
+```
+
+Full detail: **[ARCHITECTURE.md](./ARCHITECTURE.md)**
+
 ### 4-Tier Subscription
 
 - **Free** – Limited entries, basic logging
