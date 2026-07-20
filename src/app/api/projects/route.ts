@@ -1,15 +1,34 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { deleteProject, readData, upsertProject } from "@/lib/store";
+import {
+  createProject,
+  deleteProject,
+  NotFoundError,
+  readData,
+  updateProject,
+} from "@/lib/store";
 
-const projectSchema = z.object({
-  id: z.string().optional(),
+/** See logs/route.ts - defaults are attached to the create schema only. */
+const projectFields = {
   name: z.string().min(1),
-  siteAddress: z.string().default(""),
-  client: z.string().default(""),
-  status: z.enum(["planned", "active", "on_hold", "complete"]).default("active"),
-  notes: z.string().default(""),
+  siteAddress: z.string(),
+  client: z.string(),
+  status: z.enum(["planned", "active", "on_hold", "complete"]),
+  notes: z.string(),
+};
+
+const createProjectSchema = z.object({
+  ...projectFields,
+  siteAddress: projectFields.siteAddress.default(""),
+  client: projectFields.client.default(""),
+  status: projectFields.status.default("active"),
+  notes: projectFields.notes.default(""),
 });
+
+const updateProjectSchema = z
+  .object(projectFields)
+  .partial()
+  .extend({ id: z.string().min(1) });
 
 export async function GET() {
   const data = await readData();
@@ -17,13 +36,36 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  let json: unknown;
   try {
-    const body = projectSchema.parse(await req.json());
-    const project = await upsertProject(body);
-    return NextResponse.json(project, { status: body.id ? 200 : 201 });
+    json = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const isEdit =
+    typeof json === "object" &&
+    json !== null &&
+    typeof (json as { id?: unknown }).id === "string";
+
+  try {
+    if (isEdit) {
+      const body = updateProjectSchema.parse(json);
+      return NextResponse.json(await updateProject(body), { status: 200 });
+    }
+    const body = createProjectSchema.parse(json);
+    return NextResponse.json(await createProject(body), { status: 201 });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Invalid project";
-    return NextResponse.json({ error: message }, { status: 400 });
+    if (err instanceof NotFoundError) {
+      return NextResponse.json({ error: err.message }, { status: 404 });
+    }
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Invalid project", issues: err.issues },
+        { status: 400 },
+      );
+    }
+    throw err;
   }
 }
 

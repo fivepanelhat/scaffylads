@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { rewriteLogEntry } from "@/lib/ai";
+import { AiUpstreamError, rewriteLogEntry } from "@/lib/ai";
 import { readData } from "@/lib/store";
 
 const schema = z.object({
@@ -11,8 +11,27 @@ const schema = z.object({
 });
 
 export async function POST(req: Request) {
+  let json: unknown;
   try {
-    const body = schema.parse(await req.json());
+    json = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  let body: z.infer<typeof schema>;
+  try {
+    body = schema.parse(json);
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Invalid rewrite request", issues: err.issues },
+        { status: 400 },
+      );
+    }
+    throw err;
+  }
+
+  try {
     let projectName: string | undefined;
     if (body.projectId) {
       const data = await readData();
@@ -26,7 +45,14 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(result);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "AI rewrite failed";
-    return NextResponse.json({ error: message }, { status: 400 });
+    // The request was well-formed; the provider is what failed. Answering 400
+    // here would tell the crew to fix notes that were never the problem.
+    if (err instanceof AiUpstreamError) {
+      return NextResponse.json(
+        { error: `AI provider unavailable: ${err.message}` },
+        { status: 502 },
+      );
+    }
+    throw err;
   }
 }
