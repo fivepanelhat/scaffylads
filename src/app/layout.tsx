@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
+import { BackdropFilterProbe } from "@/components/BackdropFilterProbe";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en-NZ">
       <body>
+        <BackdropFilterProbe />
         <Nav />
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
         <footer className="mx-auto max-w-6xl px-4 pb-10 pt-2 text-sm text-[var(--muted)]">
