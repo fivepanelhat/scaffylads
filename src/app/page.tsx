@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeroScaffold } from "@/components/HeroScaffold";
 import { readData } from "@/lib/store";
 import { fmtDateTime, relativeDayLabel, statusLabel } from "@/lib/format";
 
@@ -22,25 +23,22 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Ultra Glassmorphism Hero Banner — Super Grok (high-contrast CSS) */}
-      <section className="hero-banner" aria-label="ScaffyLads hero">
-        <div className="hero-orb hero-orb-sky" aria-hidden />
-        <div className="hero-orb hero-orb-orange" aria-hidden />
-        <div className="hero-orb hero-orb-indigo" aria-hidden />
+      <section className="hero-banner" aria-labelledby="hero-title">
+        <HeroScaffold className="hero-structure" />
 
-        <div className="relative z-10">
+        <div className="hero-copy">
           <p className="hero-kicker">ScaffyLads</p>
-          <h1 className="hero-title">
-            AI Work Journal for
+          <h1 id="hero-title" className="hero-title">
+            AI work journal for
             <br />
-            Scaffolding Crews
+            scaffolding crews
           </h1>
           <p className="hero-lead">
             Capture the day by voice or text. Ask questions in plain English.
             Keep clean records for IRD, clients and WorkSafe.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="hero-actions">
             <Link href="/logbook" className="btn btn-primary">
               New log entry
             </Link>

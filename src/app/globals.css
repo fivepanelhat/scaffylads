@@ -165,108 +165,152 @@ button {
   color: var(--text);
 }
 
-/* ========== Ultra Glassmorphism Hero (high-contrast / always paints) ========== */
+/* ========== Dashboard hero ==========
+   Dawn light low-left (crews start at 07:00), scaffold structure right.
+   Colours come from the tokens above rather than a separate hero palette,
+   so a token change moves the hero with the rest of the app. */
 .hero-banner {
-  position: relative !important;
-  display: block !important;
-  overflow: hidden !important;
+  position: relative;
+  display: block;
+  overflow: hidden;
   isolation: isolate;
-  border-radius: 1.75rem !important;
-  min-height: 300px !important;
-  padding: 2.75rem 2rem 2.25rem !important;
-  border: 2px solid #38bdf8 !important;
-  background-color: #13233f !important;
+  border-radius: 1.75rem;
+  min-height: 320px;
+  padding: 2.5rem 2rem;
+  border: 1px solid var(--line);
+  background-color: var(--panel);
   background-image:
-    radial-gradient(ellipse 80% 60% at 15% 0%, rgba(56, 189, 248, 0.5), transparent 55%),
-    radial-gradient(ellipse 70% 50% at 100% 100%, rgba(249, 115, 22, 0.4), transparent 50%),
-    linear-gradient(145deg, #1e3a5f 0%, #121a2b 55%, #0f2830 100%) !important;
+    radial-gradient(
+      ellipse 85% 75% at 8% 100%,
+      rgba(245, 166, 35, 0.22),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 65% 55% at 92% 8%,
+      rgba(61, 214, 198, 0.14),
+      transparent 58%
+    ),
+    linear-gradient(158deg, #17233d 0%, #101a2e 58%, var(--bg) 100%);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 20px 50px rgba(0, 0, 0, 0.55),
-    0 0 80px rgba(56, 189, 248, 0.25) !important;
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
+/* Hazard stripe along the top edge - the one piece of site vernacular that
+   earns its place, and it replaces the old debug ribbon. */
 .hero-banner::before {
-  content: "ScaffyLads · Super Grok hero";
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  padding: 0.4rem 1rem;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #0b1220;
-  background: linear-gradient(90deg, #f5a623, #38bdf8);
+  inset: 0 0 auto 0;
+  height: 4px;
+  z-index: 2;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--accent) 0 14px,
+    #0b1220 14px 28px
+  );
+  opacity: 0.9;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 36rem;
+}
+
+/* Structure sits behind the copy and slides off-canvas on narrow screens
+   rather than competing with the text. */
+.hero-structure {
+  position: absolute;
+  right: -2.5rem;
+  bottom: -1.5rem;
+  z-index: 0;
+  width: 20rem;
+  height: auto;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {
   .hero-banner {
-    padding: 3.5rem 3rem 2.75rem !important;
-    min-height: 360px !important;
+    padding: 3.25rem 3rem;
+    min-height: 360px;
+  }
+
+  .hero-structure {
+    right: 1.5rem;
+    width: 23rem;
+    opacity: 0.68;
   }
 }
 
-.hero-orb {
-  pointer-events: none;
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(48px);
-  z-index: 0;
-}
-
-.hero-orb-sky {
-  left: -3rem;
-  top: 0.5rem;
-  width: 16rem;
-  height: 16rem;
-  background: rgba(56, 189, 248, 0.55);
-}
-
-.hero-orb-orange {
-  right: -2rem;
-  bottom: -2rem;
-  width: 18rem;
-  height: 18rem;
-  background: rgba(249, 115, 22, 0.45);
-}
-
-.hero-orb-indigo {
-  left: 45%;
-  top: 1rem;
-  width: 11rem;
-  height: 11rem;
-  background: rgba(129, 140, 248, 0.45);
+@media (max-width: 560px) {
+  .hero-structure {
+    display: none;
+  }
 }
 
 .hero-kicker {
-  margin: 1.1rem 0 0;
-  font-size: 0.9rem;
+  margin: 0.6rem 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #7dd3fc !important;
-  text-shadow: 0 0 20px rgba(56, 189, 248, 0.55);
+  color: var(--accent);
+}
+
+.hero-kicker::before {
+  content: "";
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
 }
 
 .hero-title {
-  margin: 0.85rem 0 0;
-  font-size: clamp(2.1rem, 5.5vw, 3.25rem) !important;
-  font-weight: 800 !important;
+  margin: 0.9rem 0 0;
+  font-size: clamp(2.1rem, 5.5vw, 3.25rem);
+  font-weight: 800;
   letter-spacing: -0.035em;
-  line-height: 1.08;
-  color: #ffffff !important;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.45);
+  line-height: 1.06;
+  text-wrap: balance;
+  color: #fff;
 }
 
 .hero-lead {
-  margin: 1.1rem 0 0;
-  max-width: 34rem;
-  font-size: 1.15rem !important;
+  margin: 1rem 0 0;
+  max-width: 32rem;
+  font-size: 1.1rem;
   line-height: 1.55;
-  color: #e2e8f0 !important;
+  color: var(--muted);
+}
+
+.hero-actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* The entrance animation moves the hero only - it never fades it in.
+   An opacity-0 start with fill-mode:both leaves the banner blank whenever the
+   animation does not run (throttled tab, stalled compositor, headless render),
+   which is how this hero ended up invisible before. Animating transform alone
+   means a stalled animation degrades to "visible but static" rather than
+   "gone". */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-banner {
+    animation: hero-rise 420ms ease-out both;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(8px);
+  }
+  to {
+    transform: none;
+  }
 }
