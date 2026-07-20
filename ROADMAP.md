@@ -107,7 +107,8 @@ Do not un-check without a deliberate rollback.
 ## 6. Ops & quality
 
 - [x] CI-friendly scripts (type-check, lint, test, build)
-- [ ] GitHub Actions green on every PR
+- [x] GitHub Actions: `ci.yml` + `ci-scan.yml` + `secops.yml` + `redteam.yml`
+- [x] Red-team suite `tests_security_stress/` (sovereignty / offline AI defaults)
 - [ ] Preview deploys per PR (Vercel)
 - [ ] Error monitoring (Sentry or equivalent) with PII scrubbing
 - [ ] Seed / reset demo data command
