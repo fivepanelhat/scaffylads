@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { HeroScaffold } from "@/components/HeroScaffold";
 import { readData } from "@/lib/store";
 import { fmtDateTime, relativeDayLabel, statusLabel } from "@/lib/format";
 
@@ -23,9 +23,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <section className="hero-banner" aria-labelledby="hero-title">
-        <HeroScaffold className="hero-structure" />
+      {/* Product banner — same pattern as CAT social_preview assets */}
+      <section className="hero-image-wrap" aria-label="ScaffyLads product banner">
+        <Image
+          src="/social_preview.png"
+          alt="ScaffyLads — AI work journal for scaffolding crews on a night construction site"
+          width={1280}
+          height={720}
+          priority
+          className="hero-image"
+        />
+      </section>
 
+      <section className="hero-banner" aria-labelledby="hero-title">
         <div className="hero-copy">
           <p className="hero-kicker">ScaffyLads</p>
           <h1 id="hero-title" className="hero-title">

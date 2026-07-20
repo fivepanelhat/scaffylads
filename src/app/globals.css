@@ -165,12 +165,29 @@ button {
   color: var(--text);
 }
 
-/* ========== Dashboard hero ==========
-   Dawn light low-left (crews start at 07:00), scaffold structure right.
-   Colours come from the tokens above rather than a separate hero palette,
-   so a token change moves the hero with the rest of the app. */
+/* Front-page product banner image (same pattern as CAT social_preview) */
+.hero-image-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  background: #0a1020;
+}
 
-/* ========== Hero: solid paint only (Scaffylad.txt — no backdrop-filter) ========== */
+.hero-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: min(52vh, 420px);
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+/* ========== Dashboard hero copy panel ========== */
+/* Solid paint only — no backdrop-filter (Scaffylad.txt probe) */
 .hero-banner {
   position: relative !important;
   display: block !important;
