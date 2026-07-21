@@ -273,5 +273,10 @@ and [AGENTS.md](./AGENTS.md) rule 6, nothing should leave the device without the
 crew knowing — if you enable live mode, make sure that is the intent for the
 journal content in question.
 
+## License
+
+Proprietary — © 2026 Coastal Alpine Tech Limited. All rights reserved. No
+open-source grant is implied by access to this repository; see [LICENSE](./LICENSE).
+
 Built with care for the lads on the tools.  
 Coastal Alpine Tech • Taranaki / Aotearoa
