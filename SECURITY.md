@@ -18,3 +18,15 @@ Please open a private GitHub Security Advisory on this repository, or contact th
 
 Security fixes target the default branch (`main`) of this repository.
 
+## Data sales and third parties
+
+- **We do not sell personal information or customer operational data to third parties.**
+- Optional AI or cloud services run only when configured by the operator; processing must be disclosed (in-product and/or docs).
+- Prefer local-first paths so third-party transfer is unnecessary by default.
+
+## NZ Privacy Act and Te Mana Raraunga
+
+- Design in accordance with the **Privacy Act 2020**.
+- Operate in accordance with **Te Mana Raraunga** principles for Māori data sovereignty interests.
+- Align AI features with **NZ AI safety** / responsible AI expectations (HITL, transparency, no silent training on private content).
+
