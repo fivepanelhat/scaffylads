@@ -1,10 +1,5 @@
 # ScaffyLads
 
-[![Privacy](https://img.shields.io/badge/Privacy-Local--first%20%2B%20Privacy%20Act%202020-00247D)](./COMPLIANCE.md)
-[![Security](https://img.shields.io/badge/Security-No%20silent%20exfil%20%2B%20SecOps-dc2626)](./SECURITY.md)
-[![Governance](https://img.shields.io/badge/Governance-HITL%20%2B%20Te%20Mana%20Raraunga-0f766e)](./COMPLIANCE.md)
-
-
 <!-- BEGIN CAT_CONGRUENCE_SNIPPET -->
 ## Coastal Alpine Tech portfolio
 
@@ -28,23 +23,6 @@
 **Agents inform, draft, prepare, and remind. Humans save, sign, file, send, and pay.**  
 Congruence: [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md) · Compliance: [`COMPLIANCE.md`](./COMPLIANCE.md) · Agents: [`AGENTS.md`](./AGENTS.md)
 <!-- END CAT_CONGRUENCE_SNIPPET -->
-
-<!-- BEGIN PRIVACY_SECURITY_GOVERNANCE -->
-## Privacy / Security / Governance
-
-Coastal Alpine Tech products treat operational and personal data as **taonga**. Defaults favour **local-first** operation, **purpose-limited** collection, and **Human-in-the-Loop** for high-stakes actions.
-
-| Pillar | Commitment |
-| :--- | :--- |
-| **Privacy** | Local-first / offline-capable where practical; Privacy Act 2020 awareness; cloud and third-party AI only when **opt-in and labelled** |
-| **Security** | No silent exfiltration of tenant or personal data; owner-controlled keys; SecOps / dependency hygiene on the fleet cadence |
-| **Governance** | Agents **inform, draft, prepare**; humans **advise, sign, file, send, and pay**. Te Mana Raraunga spirit for Māori data sovereignty |
-
-**Agents inform, draft, prepare, monitor, and remind. Humans advise, sign, file, send, and pay.**
-
-Fleet policy: [fivepanelhat / Kiwi Edge AI Stack](https://github.com/fivepanelhat/fivepanelhat) · Product detail: [`COMPLIANCE.md`](./COMPLIANCE.md) · [`SECURITY.md`](./SECURITY.md) (where present) · [`CAT_CONGRUENCE.md`](./CAT_CONGRUENCE.md) (where present)
-<!-- END PRIVACY_SECURITY_GOVERNANCE -->
-
 
 ![ScaffyLads Banner](assets/social_preview.png)
 
@@ -295,29 +273,10 @@ and [AGENTS.md](./AGENTS.md) rule 6, nothing should leave the device without the
 crew knowing — if you enable live mode, make sure that is the intent for the
 journal content in question.
 
+## License
 
-### Storage: local file or hosted Postgres
-
-Two backends, chosen by whether Supabase env vars are present. There is no
-build flag and no code change — see `src/lib/store.ts`.
-
-| | Local JSON (default) | Supabase |
-| --- | --- | --- |
-| Setup | none | project + migration + env vars |
-| Accounts | none, single user | magic-link sign-in |
-| Data location | `data/app-data.json` on your machine | your Supabase project |
-| Isolation | n/a | row-level security, per user |
-| Used by | `npm run dev`, tests, CI | deployments |
-
-#### Turning on Supabase (auth + RLS)
-
-1. Create a Supabase project — give ScaffyLads its **own** project rather than reusing another product's.
-2. Apply migrations under `supabase/migrations/` (SQL editor or `supabase db push`).
-3. Enable the **Email** provider in Authentication → Providers.
-4. Add callback URL: `https://<your-domain>/auth/callback` (and `http://localhost:3000/auth/callback` locally).
-5. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local` and host env.
-
-Once configured, routes except `/login` and auth callbacks require a signed-in user (see `src/middleware.ts`).
+Proprietary — © 2026 Coastal Alpine Tech Limited. All rights reserved. No
+open-source grant is implied by access to this repository; see [LICENSE](./LICENSE).
 
 Built with care for the lads on the tools.  
 Coastal Alpine Tech • Taranaki / Aotearoa
