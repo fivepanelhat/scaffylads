@@ -2,6 +2,7 @@
   "name": "scaffylads",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -14,6 +15,7 @@
     "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.7",
     "date-fns": "^4.4.0",
     "next": "^16.2.10",

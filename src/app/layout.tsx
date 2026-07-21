@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Nav } from "@/components/Nav";
 import { BackdropFilterProbe } from "@/components/BackdropFilterProbe";
+import { isSupabaseConfigured } from "@/env";
+import { getUser } from "@/lib/supabase/server";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,7 +24,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+/**
+ * Only ask Supabase who the user is when Supabase is actually configured -
+ * on the local JSON store there are no accounts to check.
+ */
+async function signedIn(): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+  try {
+    return Boolean(await getUser());
+  } catch {
+    return false;
+  }
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -32,7 +47,7 @@ export default function RootLayout({
       <body>
         <BackdropFilterProbe />
         <div className="app-shell">
-          <Nav />
+          <Nav signedIn={await signedIn()} />
           <main className="app-main">{children}</main>
           <footer className="site-footer">
             <div className="site-footer-inner">
